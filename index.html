@@ -176,8 +176,8 @@
   <div id="sidebar-menus">
     <div class="avatar-img is-center"><img src="/image/texas.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div>
     <div class="sidebar-site-data site-data is-center">
-      <a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a>
-      <a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a>
+      <a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a>
+      <a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a>
       <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
     </div>
     <hr class="custom-hr"/>
@@ -215,6 +215,16 @@
   </header>
   <main class="layout" id="content-inner">
     <div class="recent-posts" id="recent-posts">
+      <!-- 新增文章：nextTick与组件生命周期深度解析 -->
+      <div class="recent-post-item">
+        <div class="recent-post-info no-cover">
+          <a class="article-title" href="/2026/03/28/nexttick-lifecycle/" title="nextTick与组件生命周期深度解析：微任务队列与渲染时机">nextTick与组件生命周期深度解析：微任务队列与渲染时机</a>
+          <div class="article-meta-wrap">
+            <span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-28T11:00:00.000Z" title="发表于 2026-03-28">2026-03-28</time></span>
+          </div>
+          <div class="content">深度解析Vue/React中的nextTick实现原理、微任务队列机制，以及组件生命周期的调用时机。探讨异步更新策略、在mounted和created中使用nextTick的场景，并提供源码层面的分析和最佳实践，帮助开发者彻底理解DOM更新时机与生命周期钩子的协作关系。</div>
+        </div>
+      </div>
       <!-- 最新文章：前端路由深度剖析 -->
       <div class="recent-post-item">
         <div class="recent-post-info no-cover">
@@ -279,8 +289,8 @@ More info: Deployment
           <div class="author-info__description">Texas-bread</div>
         </div>
         <div class="card-info-data site-data is-center">
-          <a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a>
-          <a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a>
+          <a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a>
+          <a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a>
           <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
         </div>
         <a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Texas-bread"><i class="fab fa-github"></i><span>Follow Me</span></a>
@@ -295,6 +305,12 @@ More info: Deployment
           <div class="aside-list">
             <div class="aside-list-item no-cover">
               <div class="content">
+                <a class="title" href="/2026/03/28/nexttick-lifecycle/" title="nextTick与组件生命周期深度解析：微任务队列与渲染时机">nextTick与组件生命周期深度解析：微任务队列与渲染时机</a>
+                <time datetime="2026-03-28T11:00:00.000Z" title="发表于 2026-03-28">2026-03-28</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
                 <a class="title" href="/2026/03/28/frontend-router/" title="前端路由深度剖析：Hash/History模式、守卫机制与动态路由全解析">前端路由深度剖析：Hash/History模式、守卫机制与动态路由全解析</a>
                 <time datetime="2026-03-28T10:00:00.000Z" title="发表于 2026-03-28">2026-03-28</time>
               </div>
@@ -305,28 +321,22 @@ More info: Deployment
                 <time datetime="2026-03-28T10:00:00.000Z" title="发表于 2026-03-28">2026-03-28</time>
               </div>
             </div>
-            <div class="aside-list-item no-cover">
-              <div class="content">
-                <a class="title" href="/2024/03/05/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/" title="文章标题">文章标题</a>
-                <time datetime="2024-03-05T15:20:58.000Z" title="发表于 2024-03-05 23:20:58">2024-03-05</time>
-              </div>
-            </div>
           </div>
         </div>
         <div class="card-widget card-archives">
           <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
           <ul class="card-archive-list">
-            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">2</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">3</span></a></li>
             <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li>
           </ul>
         </div>
         <div class="card-widget card-webinfo">
           <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
           <div class="webinfo">
-            <div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">4</div></div>
+            <div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">5</div></div>
             <div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
             <div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
-            <div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T10:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T11:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
           </div>
         </div>
       </div>
