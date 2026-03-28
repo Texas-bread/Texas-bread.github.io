@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Vue中的Promise应用与异步编程最佳实践 | Texas-bread的技术专栏</title>
+  <meta name="author" content="Texas-bread">
+  <meta name="copyright" content="Texas-bread">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="深入探讨Vue中Promise的应用场景、异步组件加载、axios请求处理、以及与async/await的结合使用，提供完整的异步编程最佳实践。">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Vue中的Promise应用与异步编程最佳实践">
+  <meta property="og:url" content="http://example.com/2026/03/28/vue-promise/">
+  <meta property="og:site_name" content="Texas-bread的小破站">
+  <meta property="og:description" content="深入探讨Vue中Promise的应用场景、异步组件加载、axios请求处理、以及与async/await的结合使用，提供完整的异步编程最佳实践。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="http://example.com/image/texas.jpg">
+  <meta property="article:author" content="Texas-bread">
+  <meta property="article:published_time" content="2026-03-28T12:00:00.000Z">
+  <meta property="article:tag" content="Vue">
+  <meta property="article:tag" content="Promise">
+  <meta property="article:tag" content="异步编程">
+  <meta property="article:tag" content="async/await">
+  <meta property="article:tag" content="axios">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="http://example.com/image/texas.jpg">
+  <link rel="shortcut icon" href="/image/Omnissiah.jpg">
+  <link rel="canonical" href="http://example.com/2026/03/28/vue-promise/">
+  <link rel="preconnect" href="//cdn.jsdelivr.net/">
+  <link rel="preconnect" href="//busuanzi.ibruce.info/">
+  <link rel="stylesheet" href="/css/index.css?v=4.13.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'">
+  <script>
+    const GLOBAL_CONFIG = {
+      root: '/',
+      algolia: undefined,
+      localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+      translate: undefined,
+      noticeOutdate: undefined,
+      highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+      copy: { success: '复制成功', error: '复制错误', noSupport: '浏览器不支持' },
+      relativeDate: { homepage: false, post: false },
+      runtime: '',
+      dateSuffix: { just: '刚刚', min: '分钟前', hour: '小时前', day: '天前', month: '个月前' },
+      copyright: undefined,
+      lightbox: 'fancybox',
+      Snackbar: undefined,
+      infinitegrid: { js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js', buttonText: '加载更多' },
+      isPhotoFigcaption: false,
+      islazyload: false,
+      isAnchor: false,
+      percent: { toc: true, rightside: false },
+      autoDarkmode: false
+    }
+  </script>
+  <script id="config-diff">
+    var GLOBAL_CONFIG_SITE = {
+      title: 'Vue中的Promise应用与异步编程最佳实践',
+      isPost: true,
+      isHome: false,
+      isHighlightShrink: false,
+      isToc: true,
+      postUpdate: '2026-03-28 12:00:00'
+    }
+  </script>
+  <script>
+    (win => {
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = { value, expiry }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+          if (!itemStr) return undefined
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+        Object.keys(attr).forEach(key => script.setAttribute(key, attr[key]))
+        document.head.appendChild(script)
+      })
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+      if (t === 'dark') activateDarkMode()
+      else if (t === 'light') activateLightMode()
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') document.documentElement.classList.add('hide-aside')
+        else document.documentElement.classList.remove('hide-aside')
+      }
+      const detectApple = () => {
+        if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)
+  </script>
+  <link rel="stylesheet" href="/css/transpancy.css">
+  <link rel="stylesheet" href="/css/modify.css">
+  <meta name="generator" content="Hexo 7.1.1">
+</head>
+<body>
+<div id="web_bg"></div>
+<div id="sidebar">
+  <div id="menu-mask"></div>
+  <div id="sidebar-menus">
+    <div class="avatar-img is-center"><img src="/image/texas.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div>
+    <div class="sidebar-site-data site-data is-center">
+      <a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a>
+      <a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a>
+      <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
+    </div>
+    <hr class="custom-hr">
+    <div class="menus_items">
+      <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+      <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+        <ul class="menus_item_child">
+          <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+          <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+          <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+        </ul>
+      </div>
+      <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="body-wrap">
+  <header class="not-home-page" id="page-header" style="background-image: url('/image/mudrock.png')">
+    <nav id="nav">
+      <span id="blog-info"><a href="/" title="Texas-bread的小破站"><span class="site-name">Texas-bread的小破站</span></a></span>
+      <div id="menus">
+        <div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div>
+        <div class="menus_items">
+          <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+          <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+            <ul class="menus_item_child">
+              <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+              <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+              <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+            </ul>
+          </div>
+          <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+        </div>
+        <div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div>
+      </div>
+    </nav>
+    <div id="page-site-info">
+      <h1 id="site-title">Vue中的Promise应用与异步编程最佳实践</h1>
+    </div>
+  </header>
+  <main class="layout" id="content-inner">
+    <div id="post">
+      <div id="post-info">
+        <div class="post-meta">
+          <span class="post-meta-date">
+            <i class="far fa-calendar-alt"></i>
+            <time datetime="2026-03-28T12:00:00.000Z" title="发表于 2026-03-28 20:00:00">2026-03-28</time>
+          </span>
+          <span class="post-meta-categories">
+            <i class="fas fa-folder-open"></i>
+            <a href="/categories/前端框架原理/">前端框架原理</a>
+          </span>
+          <span class="post-meta-tags">
+            <i class="fas fa-tags"></i>
+            <a href="/tags/Vue/">Vue</a>, <a href="/tags/Promise/">Promise</a>, <a href="/tags/异步编程/">异步编程</a>, <a href="/tags/async/await/">async/await</a>, <a href="/tags/axios/">axios</a>
+          </span>
+        </div>
+      </div>
+      <div class="post-content">
+        <p>在Vue开发中，异步编程是绕不开的话题。从API请求到组件加载，从数据处理到状态管理，Promise和其衍生的async/await语法已经成为现代前端开发的标配。本文将深入探讨Vue中Promise的各类应用场景，结合实战案例，总结异步编程的最佳实践。</p>
+
+        <h2 id="一、Promise基础回顾与Vue中的应用场景"><a href="#一、Promise基础回顾与Vue中的应用场景" class="headerlink" title="一、Promise基础回顾与Vue中的应用场景"></a>一、Promise基础回顾与Vue中的应用场景</h2>
+        <p>Promise是JavaScript中处理异步操作的对象，代表一个尚未完成但预计会完成的操作。在Vue中，Promise主要应用于以下场景：</p>
+        <ul>
+          <li>API请求（如axios）</li>
+          <li>异步组件加载</li>
+          <li>路由导航守卫</li>
+          <li>Vuex中的异步action</li>
+          <li>生命周期钩子中的异步操作</li>
+        </ul>
+        <pre><code class="lang-javascript">// 基本Promise用法
+new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('成功');
+  }, 1000);
+}).then(result => {
+  console.log(result);
+}).catch(error => {
+  console.error(error);
+});</code></pre>
+
+        <h2 id="二、axios与Promise：网络请求的最佳实践"><a href="#二、axios与Promise：网络请求的最佳实践" class="headerlink" title="二、axios与Promise：网络请求的最佳实践"></a>二、axios与Promise：网络请求的最佳实践</h2>
+        <p>axios是Vue生态中最常用的HTTP客户端，它基于Promise实现，提供了丰富的拦截器和配置选项。</p>
+        <pre><code class="lang-javascript">// 创建axios实例
+const api = axios.create({
+  baseURL: 'https://api.example.com',
+  timeout: 10000
+});
+
+// 请求拦截器
+api.interceptors.request.use(config => {
+  // 添加token等逻辑
+  return config;
+});
+
+// 响应拦截器
+api.interceptors.response.use(response => {
+  return response.data;
+}, error => {
+  // 统一错误处理
+  return Promise.reject(error);
+});
+
+// 在Vue组件中使用
+async getUsers() {
+  try {
+    const users = await api.get('/users');
+    this.users = users;
+  } catch (error) {
+    this.$message.error('获取用户列表失败');
+  }
+}</code></pre>
+
+        <h2 id="三、异步组件与动态导入：提升应用性能"><a href="#三、异步组件与动态导入：提升应用性能" class="headerlink" title="三、异步组件与动态导入：提升应用性能"></a>三、异步组件与动态导入：提升应用性能</h2>
+        <p>Vue的异步组件功能允许我们按需加载组件，减少初始包大小，提升首屏加载速度。</p>
+        <h3 id="3-1-Vue-2-x-中的异步组件"><a href="#3-1-Vue-2-x-中的异步组件" class="headerlink" title="3.1 Vue 2.x 中的异步组件"></a>3.1 Vue 2.x 中的异步组件</h3>
+        <pre><code class="lang-javascript">// Vue 2.x 异步组件
+const AsyncComponent = () => ({
+  component: import('./HeavyComponent.vue'),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 3000
+});
+
+export default {
+  components: {
+    AsyncComponent
+  }
+};</code></pre>
+        <h3 id="3-2-Vue-3-中的异步组件"><a href="#3-2-Vue-3-中的异步组件" class="headerlink" title="3.2 Vue 3 中的异步组件"></a>3.2 Vue 3 中的异步组件</h3>
+        <pre><code class="lang-javascript">// Vue 3 异步组件
+import { defineAsyncComponent } from 'vue';
+
+const AsyncComponent = defineAsyncComponent({
+  loader: () => import('./HeavyComponent.vue'),
+  loadingComponent: LoadingComponent,
+  errorComponent: ErrorComponent,
+  delay: 200,
+  timeout: 3000
+});
+
+export default {
+  components: {
+    AsyncComponent
+  }
+};</code></pre>
+
+        <h2 id="四、async-await：Promise的语法糖"><a href="#四、async-await：Promise的语法糖" class="headerlink" title="四、async-await：Promise的语法糖"></a>四、async-await：Promise的语法糖</h2>
+        <p>async/await是ES2017引入的语法，它让异步代码看起来更像同步代码，提高了可读性和可维护性。</p>
+        <pre><code class="lang-javascript">// async/await 基本用法
+async function fetchData() {
+  try {
+    const response = await axios.get('/api/data');
+    const processedData = await processData(response.data);
+    return processedData;
+  } catch (error) {
+    console.error('获取数据失败:', error);
+    throw error;
+  }
+}
+
+// 在Vue组件中使用
+export default {
+  data() {
+    return {
+      data: null,
+      loading: false
+    };
+  },
+  methods: {
+    async loadData() {
+      this.loading = true;
+      try {
+        this.data = await fetchData();
+      } finally {
+        this.loading = false;
+      }
+    }
+  },
+  mounted() {
+    this.loadData();
+  }
+};</code></pre>
+
+        <h2 id="五、Promise.all与Promise.race：并发与竞态处理"><a href="#五、Promise.all与Promise.race：并发与竞态处理" class="headerlink" title="五、Promise.all与Promise.race：并发与竞态处理"></a>五、Promise.all与Promise.race：并发与竞态处理</h2>
+        <p>当需要同时处理多个异步操作时，Promise.all和Promise.race是非常有用的工具。</p>
+        <h3 id="5-1-Promise-all-并行处理多个请求"><a href="#5-1-Promise-all-并行处理多个请求" class="headerlink" title="5.1 Promise.all 并行处理多个请求"></a>5.1 Promise.all 并行处理多个请求</h3>
+        <pre><code class="lang-javascript">// 并行请求多个接口
+async function fetchAllData() {
+  try {
+    const [users, posts, comments] = await Promise.all([
+      api.get('/users'),
+      api.get('/posts'),
+      api.get('/comments')
+    ]);
+    return { users, posts, comments };
+  } catch (error) {
+    console.error('请求失败:', error);
+  }
+}</code></pre>
+        <h3 id="5-2-Promise-race-处理竞态条件"><a href="#5-2-Promise-race-处理竞态条件" class="headerlink" title="5.2 Promise.race 处理竞态条件"></a>5.2 Promise.race 处理竞态条件</h3>
+        <pre><code class="lang-javascript">// 实现请求超时
+function fetchWithTimeout(url, timeout = 5000) {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('请求超时')), timeout);
+  });
+  
+  return Promise.race([
+    axios.get(url),
+    timeoutPromise
+  ]);
+}</code></pre>
+
+        <h2 id="六、Vuex中的异步操作：Action与Promise"><a href="#六、Vuex中的异步操作：Action与Promise" class="headerlink" title="六、Vuex中的异步操作：Action与Promise"></a>六、Vuex中的异步操作：Action与Promise</h2>
+        <p>在Vuex中，Action用于处理异步操作，它默认返回一个Promise，这使得我们可以方便地链式调用和错误处理。</p>
+        <pre><code class="lang-javascript">// Vuex Action 示例
+const actions = {
+  async fetchUser({ commit }, userId) {
+    try {
+      commit('SET_LOADING', true);
+      const user = await api.get(`/users/${userId}`);
+      commit('SET_USER', user);
+      return user;
+    } catch (error) {
+      commit('SET_ERROR', error.message);
+      throw error;
+    } finally {
+      commit('SET_LOADING', false);
+    }
+  }
+};
+
+// 在组件中使用
+try {
+  const user = await this.$store.dispatch('fetchUser', 1);
+  console.log('获取用户成功:', user);
+} catch (error) {
+  console.error('获取用户失败:', error);
+}</code></pre>
+
+        <h2 id="七、实战陷阱与最佳实践"><a href="#七、实战陷阱与最佳实践" class="headerlink" title="七、实战陷阱与最佳实践"></a>七、实战陷阱与最佳实践</h2>
+        <h3 id="7-1-常见陷阱"><a href="#7-1-常见陷阱" class="headerlink" title="7.1 常见陷阱"></a>7.1 常见陷阱</h3>
+        <ul>
+          <li><strong>未捕获的Promise错误</strong>：忘记添加catch处理，导致控制台报错</li>
+          <li><strong>竞态条件</strong>：多个相同请求同时发送，后返回的覆盖先返回的</li>
+          <li><strong>内存泄漏</strong>：组件销毁后仍在执行的Promise</li>
+          <li><strong>过度使用async/await</strong>：串行执行本可以并行的操作</li>
+        </ul>
+        <h3 id="7-2-最佳实践"><a href="#7-2-最佳实践" class="headerlink" title="7.2 最佳实践"></a>7.2 最佳实践</h3>
+        <ul>
+          <li><strong>统一错误处理</strong>：使用axios拦截器或全局错误处理</li>
+          <li><strong>合理使用并行请求</strong>：对于互不依赖的请求使用Promise.all</li>
+          <li><strong>取消不必要的请求</strong>：使用axios的cancel token</li>
+          <li><strong>组件销毁时清理</strong>：在beforeUnmount中取消未完成的操作</li>
+          <li><strong>合理使用async/await</strong>：保持代码清晰的同时注意性能</li>
+        </ul>
+
+        <h2 id="八、总结：异步编程的艺术"><a href="#八、总结：异步编程的艺术" class="headerlink" title="八、总结：异步编程的艺术"></a>八、总结：异步编程的艺术</h2>
+        <p>Promise和async/await已经成为现代前端开发的核心工具，它们不仅简化了异步代码的编写，也提高了代码的可维护性。在Vue开发中，合理应用这些技术，可以：</p>
+        <ul>
+          <li>提升应用性能（通过异步组件和并行请求）</li>
+          <li>改善用户体验（通过合理的加载状态管理）</li>
+          <li>减少代码复杂度（通过async/await的同步式语法）</li>
+          <li>提高代码可维护性（通过统一的错误处理）</li>
+        </ul>
+        <blockquote>
+          <p>“异步编程不是负担，而是一种能力。掌握Promise和async/await，让你的Vue应用更加优雅和高效。” —— 本文作者注</p>
+        </blockquote>
+        <p><em>参考文献：Vue官方文档 — 异步组件；axios官方文档；MDN Web Docs — Promise；ECMAScript规范 — async/await。</em></p>
+      </div>
+      <div class="post-copyright">
+        <div class="post-copyright__author"><span>本文作者：</span>Texas-bread</div>
+        <div class="post-copyright__type"><span>本文链接：</span><a href="http://example.com/2026/03/28/vue-promise/">http://example.com/2026/03/28/vue-promise/</a></div>
+        <div class="post-copyright__notice"><span>版权声明：</span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</div>
+      </div>
+      <nav class="post-navigation">
+        <div class="prev"><a href="/2026/03/28/nexttick-lifecycle/" rel="prev">← nextTick与组件生命周期深度解析：事件循环视角下的异步更新与钩子时序</a></div>
+        <div class="next"><a href="/2026/03/28/frontend-router/" rel="next">前端路由深度剖析：Hash/History模式、守卫机制与动态路由全解析 →</a></div>
+      </nav>
+    </div>
+
+    <div class="aside-content" id="aside-content">
+      <div class="card-widget card-info">
+        <div class="is-center">
+          <div class="avatar-img"><img src="/image/texas.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div>
+          <div class="author-info__name">Texas-bread</div>
+          <div class="author-info__description">前端架构师 | 热爱工程化与底层原理</div>
+        </div>
+        <div class="card-info-data site-data is-center">
+          <a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a>
+          <a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a>
+          <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
+        </div>
+        <a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Texas-bread"><i class="fab fa-github"></i><span>Follow Me</span></a>
+      </div>
+      <div class="card-widget card-announcement">
+        <div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div>
+        <div class="announcement_content">深入源码，专注现代前端工程化实践。</div>
+      </div>
+      <div class="sticky_layout">
+        <div class="card-widget card-recent-post">
+          <div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div>
+          <div class="aside-list">
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/28/vue-promise/" title="Vue中的Promise应用与异步编程最佳实践">Vue中的Promise应用与异步编程最佳实践</a>
+                <time datetime="2026-03-28T12:00:00.000Z">2026-03-28</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/28/nexttick-lifecycle/" title="nextTick与组件生命周期深度解析：事件循环视角下的异步更新与钩子时序">nextTick与组件生命周期深度解析：事件循环视角下的异步更新与钩子时序</a>
+                <time datetime="2026-03-28T10:00:00.000Z">2026-03-28</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/28/frontend-router/" title="前端路由深度剖析：Hash/History模式、守卫机制与动态路由全解析">前端路由深度剖析：Hash/History模式、守卫机制与动态路由全解析</a>
+                <time datetime="2026-03-28T10:00:00.000Z">2026-03-28</time>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-widget card-archives">
+          <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
+          <ul class="card-archive-list">
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">4</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/05/"><span class="card-archive-list-date">五月 2024</span><span class="card-archive-list-count">1</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li>
+          </ul>
+        </div>
+        <div class="card-widget card-webinfo">
+          <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
+          <div class="webinfo">
+            <div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">6</div></div>
+            <div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T12:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer id="footer" style="background: transparent">
+    <div id="footer-wrap">
+      <div class="copyright">&copy;2020 - 2026 By Texas-bread</div>
+      <div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div>
+    </div>
+  </footer>
+</div>
+<div id="rightside">
+  <div id="rightside-config-hide">
+    <button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button>
+    <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button>
+  </div>
+  <div id="rightside-config-show">
+    <button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button>
+    <button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button>
+  </div>
+</div>
+<div>
+  <script src="/js/utils.js?v=4.13.0"></script>
+  <script src="/js/main.js?v=4.13.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script>
+  <div class="js-pjax"></div>
+  <div class="aplayer no-destroy" data-id="8152976493" data-server="netease" data-type="playlist" data-order="list" data-fixed="true" data-preload="auto" data-autoplay="false" data-mutex="true"></div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script>
+  <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <div id="local-search">
+    <div class="search-dialog">
+      <nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav>
+      <div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div>
+      <div class="search-wrap">
+        <div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div>
+        <hr><div id="local-search-results"></div><div id="local-search-stats-wrap"></div>
+      </div>
+    </div>
+    <div id="search-mask"></div>
+    <script src="/js/search/local-search.js?v=4.13.0"></script>
+  </div>
+</div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/kasumi_event128.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":20,"vOffset":0},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script>
+</body>
+</html>
