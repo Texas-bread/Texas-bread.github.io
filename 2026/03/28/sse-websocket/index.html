@@ -1,35 +1,456 @@
-<!-- d:\new blog\hexo-main\hexo-main\public\2026\03\27\新文章标题\index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
-  <title>新文章标题 | Texas-bread的小破站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>实时通信的两种范式：SSE流式通信与WebSocket技术剖析 | Texas-bread的小破站</title>
   <meta name="author" content="Texas-bread">
   <meta name="copyright" content="Texas-bread">
-  <meta name="description" content="这是一篇新文章">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="深度解析SSE与WebSocket的原理、API对比及选型建议，涵盖前端技术实践与协议细节。">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="实时通信的两种范式：SSE流式通信与WebSocket技术剖析">
+  <meta property="og:url" content="http://example.com/2026/03/28/sse-websocket/">
+  <meta property="og:site_name" content="Texas-bread的小破站">
+  <meta property="og:description" content="深度解析SSE与WebSocket的原理、API对比及选型建议，涵盖前端技术实践与协议细节。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="http://example.com/image/texas.jpg">
+  <meta property="article:author" content="Texas-bread">
+  <meta property="article:published_time" content="2026-03-28T10:00:00.000Z">
+  <meta property="article:tag" content="SSE">
+  <meta property="article:tag" content="WebSocket">
+  <meta property="article:tag" content="实时通信">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="http://example.com/image/texas.jpg">
+  <link rel="shortcut icon" href="/image/Omnissiah.jpg">
+  <link rel="canonical" href="http://example.com/2026/03/28/sse-websocket/">
+  <link rel="preconnect" href="//cdn.jsdelivr.net/">
+  <link rel="preconnect" href="//busuanzi.ibruce.info/">
   <link rel="stylesheet" href="/css/index.css?v=4.13.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'">
+  <script>
+    const GLOBAL_CONFIG = {
+      root: '/',
+      algolia: undefined,
+      localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+      translate: undefined,
+      noticeOutdate: undefined,
+      highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+      copy: { success: '复制成功', error: '复制错误', noSupport: '浏览器不支持' },
+      relativeDate: { homepage: false, post: false },
+      runtime: '',
+      dateSuffix: { just: '刚刚', min: '分钟前', hour: '小时前', day: '天前', month: '个月前' },
+      copyright: undefined,
+      lightbox: 'fancybox',
+      Snackbar: undefined,
+      infinitegrid: { js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js', buttonText: '加载更多' },
+      isPhotoFigcaption: false,
+      islazyload: false,
+      isAnchor: false,
+      percent: { toc: true, rightside: false },
+      autoDarkmode: false
+    }
+  </script>
+  <script id="config-diff">
+    var GLOBAL_CONFIG_SITE = {
+      title: '实时通信的两种范式：SSE流式通信与WebSocket技术剖析',
+      isPost: true,
+      isHome: false,
+      isHighlightShrink: false,
+      isToc: true,
+      postUpdate: '2026-03-28 10:00:00'
+    }
+  </script>
+  <script>
+    (win => {
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = { value, expiry }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+          if (!itemStr) return undefined
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+        Object.keys(attr).forEach(key => script.setAttribute(key, attr[key]))
+        document.head.appendChild(script)
+      })
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+      if (t === 'dark') activateDarkMode()
+      else if (t === 'light') activateLightMode()
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') document.documentElement.classList.add('hide-aside')
+        else document.documentElement.classList.remove('hide-aside')
+      }
+      const detectApple = () => {
+        if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)
+  </script>
+  <link rel="stylesheet" href="/css/transpancy.css">
+  <link rel="stylesheet" href="/css/modify.css">
+  <meta name="generator" content="Hexo 7.1.1">
 </head>
 <body>
-  <main class="container">
-    <article class="post">
-      <h1 class="post-title">新文章标题</h1>
-      <div class="post-meta">
-        <span class="post-date">2026-03-27</span>
-        <span class="post-tags">
-          <a href="/tags/标签1/">标签1</a>
-          <a href="/tags/标签2/">标签2</a>
-        </span>
+<div id="web_bg"></div>
+<div id="sidebar">
+  <div id="menu-mask"></div>
+  <div id="sidebar-menus">
+    <div class="avatar-img is-center"><img src="/image/texas.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div>
+    <div class="sidebar-site-data site-data is-center">
+      <a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a>
+      <a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a>
+      <a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a>
+    </div>
+    <hr class="custom-hr">
+    <div class="menus_items">
+      <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+      <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+        <ul class="menus_item_child">
+          <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+          <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+          <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+        </ul>
+      </div>
+      <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="body-wrap">
+  <header class="not-home-page" id="page-header" style="background-image: url('/image/mudrock.png')">
+    <nav id="nav">
+      <span id="blog-info"><a href="/" title="Texas-bread的小破站"><span class="site-name">Texas-bread的小破站</span></a></span>
+      <div id="menus">
+        <div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div>
+        <div class="menus_items">
+          <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+          <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+            <ul class="menus_item_child">
+              <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+              <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+              <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+            </ul>
+          </div>
+          <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+        </div>
+        <div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div>
+      </div>
+    </nav>
+    <div id="page-site-info">
+      <h1 id="site-title">实时通信的两种范式：SSE流式通信与WebSocket技术剖析</h1>
+    </div>
+  </header>
+  <main class="layout" id="content-inner">
+    <div id="post">
+      <div id="post-info">
+        <div class="post-meta">
+          <span class="post-meta-date">
+            <i class="far fa-calendar-alt"></i>
+            <time datetime="2026-03-28T10:00:00.000Z" title="发表于 2026-03-28 18:00:00">2026-03-28</time>
+          </span>
+          <span class="post-meta-categories">
+            <i class="fas fa-folder-open"></i>
+            <a href="/categories/前端技术/">前端技术</a>
+          </span>
+          <span class="post-meta-tags">
+            <i class="fas fa-tags"></i>
+            <a href="/tags/SSE/">SSE</a>, <a href="/tags/WebSocket/">WebSocket</a>, <a href="/tags/实时通信/">实时通信</a>
+          </span>
+        </div>
       </div>
       <div class="post-content">
-        <p>这是文章的内容...</p>
-        <h2>小标题</h2>
-        <p>更多内容...</p>
+        <p>在现代Web应用开发中，实时数据推送与双向通信已成为刚需。从轮询（Polling）到长轮询（Long Polling），再到Server-Sent Events（SSE）与WebSocket，技术不断演进。本文将从协议原理、前端API、适用场景及选型角度，对SSE与WebSocket进行简要而深入的对比分析。</p>
+
+        <h2 id="一、Server-Sent-Events（SSE）"><a href="#一、Server-Sent-Events（SSE）" class="headerlink" title="一、Server-Sent Events（SSE）"></a>一、Server-Sent Events（SSE）</h2>
+        <h3 id="1-1-原理与规范"><a href="#1-1-原理与规范" class="headerlink" title="1.1 原理与规范"></a>1.1 原理与规范</h3>
+        <p>SSE基于HTTP协议，允许服务器通过一个长连接向客户端持续推送数据。其核心规范定义于HTML Living Standard，客户端使用<code>EventSource</code>接口。<br>服务器需设置响应头<code>Content-Type: text/event-stream</code>，并按照特定格式发送消息：</p>
+        <pre><code class="lang-text">data: 消息内容\n\n</code></pre>
+        <p>支持自定义事件类型、消息ID（用于断线重连后恢复）及自动重连机制。</p>
+
+        <h3 id="1-2-前端API示例"><a href="#1-2-前端API示例" class="headerlink" title="1.2 前端API示例"></a>1.2 前端API示例</h3>
+        <pre><code class="lang-javascript">const source = new EventSource('/api/stream');
+
+// 监听默认消息
+source.onmessage = (event) => {
+  console.log('收到数据:', event.data);
+};
+
+// 监听自定义事件
+source.addEventListener('ping', (event) => {
+  console.log('ping事件:', event.data);
+});
+
+source.onerror = (err) => {
+  console.error('连接异常', err);
+};</code></pre>
+
+        <h3 id="1-3-服务端简单示意（Node-js-+-Express）"><a href="#1-3-服务端简单示意（Node-js-+-Express）" class="headerlink" title="1.3 服务端简单示意（Node.js + Express）"></a>1.3 服务端简单示意（Node.js + Express）</h3>
+        <pre><code class="lang-javascript">app.get('/api/stream', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  let id = 0;
+  const timer = setInterval(() => {
+    res.write(`id: ${id}\n`);
+    res.write(`data: ${JSON.stringify({ time: Date.now() })}\n\n`);
+    id++;
+  }, 1000);
+
+  req.on('close', () => clearInterval(timer));
+});</code></pre>
+
+        <h3 id="1-4-优缺点"><a href="#1-4-优缺点" class="headerlink" title="1.4 优缺点"></a>1.4 优缺点</h3>
+        <ul>
+          <li><strong>优点</strong>：基于HTTP，部署简单；自动重连与事件ID恢复；轻量，无需额外协议。</li>
+          <li><strong>缺点</strong>：仅支持服务器→客户端单向通信；文本传输（二进制需编码）；浏览器连接数限制（HTTP/1.1下同源最多6个，HTTP/2可多路复用）。</li>
+        </ul>
+
+        <h2 id="二、WebSocket"><a href="#二、WebSocket" class="headerlink" title="二、WebSocket"></a>二、WebSocket</h2>
+        <h3 id="2-1-原理与规范"><a href="#2-1-原理与规范" class="headerlink" title="2.1 原理与规范"></a>2.1 原理与规范</h3>
+        <p>WebSocket（RFC 6455）是一个独立的全双工通信协议，通过HTTP Upgrade机制将连接升级为<code>ws</code>或<code>wss</code>（加密）协议。一旦建立，客户端与服务器可以任意时刻互相发送帧（Frame），开销远低于HTTP请求。</p>
+
+        <h3 id="2-2-前端API示例"><a href="#2-2-前端API示例" class="headerlink" title="2.2 前端API示例"></a>2.2 前端API示例</h3>
+        <pre><code class="lang-javascript">const ws = new WebSocket('wss://example.com/ws');
+
+ws.onopen = () => {
+  ws.send('客户端上线');
+};
+
+ws.onmessage = (event) => {
+  console.log('收到消息:', event.data);
+};
+
+ws.onclose = () => {
+  console.log('连接关闭，尝试重连...');
+  // 需自行实现重连逻辑
+};</code></pre>
+
+        <h3 id="2-3-服务端简单示意（Node-js-+-ws库）"><a href="#2-3-服务端简单示意（Node-js-+-ws库）" class="headerlink" title="2.3 服务端简单示意（Node.js + ws库）"></a>2.3 服务端简单示意（Node.js + ws库）</h3>
+        <pre><code class="lang-javascript">import { WebSocketServer } from 'ws';
+
+const wss = new WebSocketServer({ port: 8080 });
+
+wss.on('connection', (ws) => {
+  ws.on('message', (data) => {
+    ws.send(`回声: ${data}`);
+  });
+});</code></pre>
+
+        <h3 id="2-4-优缺点"><a href="#2-4-优缺点" class="headerlink" title="2.4 优缺点"></a>2.4 优缺点</h3>
+        <ul>
+          <li><strong>优点</strong>：双向实时、低延迟；支持二进制传输；适合高交互场景。</li>
+          <li><strong>缺点</strong>：协议较复杂，需专用服务端支持；连接管理（重连、心跳）需自行实现；负载均衡需处理长连接亲和性。</li>
+        </ul>
+
+        <h2 id="三、技术对比与选型建议"><a href="#三、技术对比与选型建议" class="headerlink" title="三、技术对比与选型建议"></a>三、技术对比与选型建议</h2>
+        <table>
+          <thead>
+            <tr><th>维度</th><th>SSE</th><th>WebSocket</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>通信方向</td><td>单向（服务器 → 客户端）</td><td>双向全双工</td></tr>
+            <tr><td>协议</td><td>HTTP / HTTPS</td><td>ws / wss（独立协议）</td></tr>
+            <tr><td>自动重连</td><td>内置支持，带Last-Event-ID</td><td>需手动实现</td></tr>
+            <tr><td>数据格式</td><td>UTF-8文本（可自定义事件）</td><td>文本或二进制帧</td></tr>
+            <tr><td>浏览器支持</td><td>除IE外全部支持</td><td>现代浏览器广泛支持</td></tr>
+            <tr><td>实现复杂度</td><td>低（EventSource）</td><td>中高（需处理心跳、重连等）</td></tr>
+            <tr><td>典型场景</td><td>实时通知、股票行情、日志流、AI流式响应</td><td>在线游戏、聊天室、协同编辑、高频交易</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="选型原则"><a href="#选型原则" class="headerlink" title="选型原则"></a>选型原则</h3>
+        <ul>
+          <li><strong>仅需服务器推送</strong>：优先选择SSE，开发成本低，且可利用HTTP基础设施（CDN、缓存控制）。</li>
+          <li><strong>双向高频交互</strong>：WebSocket是唯一合理选择。</li>
+          <li><strong>混合架构</strong>：可使用WebSocket传输核心双向数据，SSE推送辅助通知；或客户端主动请求用普通HTTP，推送用SSE。</li>
+        </ul>
+
+        <h2 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h2>
+        <p>SSE与WebSocket并非替代关系，而是面向不同通信模型的互补技术。SSE以极简的API和HTTP生态优势，在单向流式场景（如AI对话流、实时仪表盘）中愈发流行；WebSocket则凭借全双工低延迟特性，在复杂交互应用中占据主导。开发者应基于通信方向性、数据量级、运维成本综合权衡，避免过度设计。</p>
+        <blockquote>
+          <p>正如RFC 6455所言：“WebSocket旨在解决HTTP难以胜任的实时双向通信问题。”而SSE则完美填补了“单向推送但不想引入复杂协议”的空缺。</p>
+        </blockquote>
+        <p><em>参考文献：HTML Living Standard — Server-sent events；RFC 6455 — The WebSocket Protocol</em></p>
       </div>
-    </article>
+      <div class="post-copyright">
+        <div class="post-copyright__author"><span>本文作者：</span>Texas-bread</div>
+        <div class="post-copyright__type"><span>本文链接：</span><a href="http://example.com/2026/03/28/sse-websocket/">http://example.com/2026/03/28/sse-websocket/</a></div>
+        <div class="post-copyright__notice"><span>版权声明：</span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</div>
+      </div>
+      <nav class="post-navigation">
+        <div class="prev"><a href="/2024/03/05/hello-world/" rel="prev">← Hello World</a></div>
+        <div class="next"><span>没有了 →</span></div>
+      </nav>
+    </div>
+
+    <div class="aside-content" id="aside-content">
+      <div class="card-widget card-info">
+        <div class="is-center">
+          <div class="avatar-img"><img src="/image/texas.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div>
+          <div class="author-info__name">Texas-bread</div>
+          <div class="author-info__description">Texas-bread</div>
+        </div>
+        <div class="card-info-data site-data is-center">
+          <a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a>
+          <a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a>
+          <a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a>
+        </div>
+        <a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Texas-bread"><i class="fab fa-github"></i><span>Follow Me</span></a>
+      </div>
+      <div class="card-widget card-announcement">
+        <div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div>
+        <div class="announcement_content">This is my Blog</div>
+      </div>
+      <div class="sticky_layout">
+        <div class="card-widget card-recent-post">
+          <div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div>
+          <div class="aside-list">
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/28/sse-websocket/" title="实时通信的两种范式：SSE流式通信与WebSocket技术剖析">实时通信的两种范式：SSE流式通信与WebSocket技术剖析</a>
+                <time datetime="2026-03-28T10:00:00.000Z" title="发表于 2026-03-28 18:00:00">2026-03-28</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2024/03/05/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/" title="文章标题">文章标题</a>
+                <time datetime="2024-03-05T15:20:58.000Z" title="发表于 2024-03-05 23:20:58">2024-03-05</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2024/03/05/hello-world/" title="Hello World">Hello World</a>
+                <time datetime="2024-03-05T14:28:23.446Z" title="发表于 2024-03-05 22:28:23">2024-03-05</time>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-widget card-archives">
+          <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
+          <ul class="card-archive-list">
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">1</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li>
+          </ul>
+        </div>
+        <div class="card-widget card-webinfo">
+          <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
+          <div class="webinfo">
+            <div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">3</div></div>
+            <div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T10:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
-  <script src="/js/main.js"></script>
+  <footer id="footer" style="background: transparent">
+    <div id="footer-wrap">
+      <div class="copyright">&copy;2020 - 2026 By Texas-bread</div>
+      <div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div>
+    </div>
+  </footer>
+</div>
+<div id="rightside">
+  <div id="rightside-config-hide">
+    <button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button>
+    <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button>
+  </div>
+  <div id="rightside-config-show">
+    <button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button>
+    <button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button>
+  </div>
+</div>
+<div>
+  <script src="/js/utils.js?v=4.13.0"></script>
+  <script src="/js/main.js?v=4.13.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script>
+  <div class="js-pjax"></div>
+  <div class="aplayer no-destroy" data-id="8152976493" data-server="netease" data-type="playlist" data-order="list" data-fixed="true" data-preload="auto" data-autoplay="false" data-mutex="true"></div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script>
+  <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <div id="local-search">
+    <div class="search-dialog">
+      <nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav>
+      <div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div>
+      <div class="search-wrap">
+        <div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div>
+        <hr><div id="local-search-results"></div><div id="local-search-stats-wrap"></div>
+      </div>
+    </div>
+    <div id="search-mask"></div>
+    <script src="/js/search/local-search.js?v=4.13.0"></script>
+  </div>
+</div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/kasumi_event128.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":20,"vOffset":0},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script>
 </body>
 </html>
