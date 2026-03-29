@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>LLM上下文管理：前端开发者的大模型对话优化指南 | Texas-bread的技术专栏</title>
+  <meta name="author" content="Texas-bread">
+  <meta name="copyright" content="Texas-bread">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="从前端开发者视角深入讲解LLM（大语言模型）的上下文管理策略、token控制、会话历史优化，以及如何在Web应用中构建智能且高效的对话系统。">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="LLM上下文管理：前端开发者的大模型对话优化指南">
+  <meta property="og:url" content="http://example.com/2026/03/29/llm-context-management/">
+  <meta property="og:site_name" content="Texas-bread的小破站">
+  <meta property="og:description" content="从前端开发者视角深入讲解LLM（大语言模型）的上下文管理策略、token控制、会话历史优化，以及如何在Web应用中构建智能且高效的对话系统。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="http://example.com/image/texas.jpg">
+  <meta property="article:author" content="Texas-bread">
+  <meta property="article:published_time" content="2026-03-29T13:00:00.000Z">
+  <meta property="article:tag" content="LLM">
+  <meta property="article:tag" content="上下文管理">
+  <meta property="article:tag" content="token控制">
+  <meta property="article:tag" content="对话系统">
+  <meta property="article:tag" content="前端AI">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="http://example.com/image/texas.jpg">
+  <link rel="shortcut icon" href="/image/Omnissiah.jpg">
+  <link rel="canonical" href="http://example.com/2026/03/29/llm-context-management/">
+  <link rel="preconnect" href="//cdn.jsdelivr.net/">
+  <link rel="preconnect" href="//busuanzi.ibruce.info/">
+  <link rel="stylesheet" href="/css/index.css?v=4.13.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'">
+  <script>
+    const GLOBAL_CONFIG = {
+      root: '/',
+      algolia: undefined,
+      localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+      translate: undefined,
+      noticeOutdate: undefined,
+      highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+      copy: { success: '复制成功', error: '复制错误', noSupport: '浏览器不支持' },
+      relativeDate: { homepage: false, post: false },
+      runtime: '',
+      dateSuffix: { just: '刚刚', min: '分钟前', hour: '小时前', day: '天前', month: '个月前' },
+      copyright: undefined,
+      lightbox: 'fancybox',
+      Snackbar: undefined,
+      infinitegrid: { js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js', buttonText: '加载更多' },
+      isPhotoFigcaption: false,
+      islazyload: false,
+      isAnchor: false,
+      percent: { toc: true, rightside: false },
+      autoDarkmode: false
+    }
+  </script>
+  <script id="config-diff">
+    var GLOBAL_CONFIG_SITE = {
+      title: 'LLM上下文管理：前端开发者的大模型对话优化指南',
+      isPost: true,
+      isHome: false,
+      isHighlightShrink: false,
+      isToc: true,
+      postUpdate: '2026-03-29 13:00:00'
+    }
+  </script>
+  <script>
+    (win => {
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = { value, expiry }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+          if (!itemStr) return undefined
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+        Object.keys(attr).forEach(key => script.setAttribute(key, attr[key]))
+        document.head.appendChild(script)
+      })
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+      if (t === 'dark') activateDarkMode()
+      else if (t === 'light') activateLightMode()
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') document.documentElement.classList.add('hide-aside')
+        else document.documentElement.classList.remove('hide-aside')
+      }
+      const detectApple = () => {
+        if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)
+  </script>
+  <link rel="stylesheet" href="/css/transpancy.css">
+  <link rel="stylesheet" href="/css/modify.css">
+  <meta name="generator" content="Hexo 7.1.1">
+</head>
+<body>
+<div id="web_bg"></div>
+<div id="sidebar">
+  <div id="menu-mask"></div>
+  <div id="sidebar-menus">
+    <div class="avatar-img is-center"><img src="/image/texas.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div>
+    <div class="sidebar-site-data site-data is-center">
+      <a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a>
+      <a href="/tags/"><div class="headline">标签</div><div class="length-num">43</div></a>
+      <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
+    </div>
+    <hr class="custom-hr">
+    <div class="menus_items">
+      <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+      <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+        <ul class="menus_item_child">
+          <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+          <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+          <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+        </ul>
+      </div>
+      <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="body-wrap">
+  <header class="not-home-page" id="page-header" style="background-image: url('/image/mudrock.png')">
+    <nav id="nav">
+      <span id="blog-info"><a href="/" title="Texas-bread的小破站"><span class="site-name">Texas-bread的小破站</span></a></span>
+      <div id="menus">
+        <div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div>
+        <div class="menus_items">
+          <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+          <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+            <ul class="menus_item_child">
+              <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+              <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+              <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+            </ul>
+          </div>
+          <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+        </div>
+        <div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div>
+      </div>
+    </nav>
+    <div id="page-site-info">
+      <h1 id="site-title">LLM上下文管理：前端开发者的大模型对话优化指南</h1>
+    </div>
+  </header>
+  <main class="layout" id="content-inner">
+    <div id="post">
+      <div id="post-info">
+        <div class="post-meta">
+          <span class="post-meta-date">
+            <i class="far fa-calendar-alt"></i>
+            <time datetime="2026-03-29T13:00:00.000Z" title="发表于 2026-03-29 21:00:00">2026-03-29</time>
+          </span>
+          <span class="post-meta-categories">
+            <i class="fas fa-folder-open"></i>
+            <a href="/categories/AI应用开发/">AI应用开发</a>
+          </span>
+          <span class="post-meta-tags">
+            <i class="fas fa-tags"></i>
+            <a href="/tags/LLM/">LLM</a>, <a href="/tags/上下文管理/">上下文管理</a>, <a href="/tags/token控制/">token控制</a>, <a href="/tags/对话系统/">对话系统</a>, <a href="/tags/前端AI/">前端AI</a>
+          </span>
+        </div>
+      </div>
+      <div class="post-content">
+        <p>在大模型应用开发中，上下文管理是一个至关重要的环节。它直接影响着对话的连贯性、准确性以及API调用的成本。本文将从前端开发者的视角，深入讲解LLM（大语言模型）的上下文管理策略、token控制、会话历史优化，以及如何在Web应用中构建智能且高效的对话系统。</p>
+
+        <h2 id="一、LLM上下文管理基础"><a href="#一、LLM上下文管理基础" class="headerlink" title="一、LLM上下文管理基础"></a>一、LLM上下文管理基础</h2>
+        <h3 id="1-1-什么是上下文窗口"><a href="#1-1-什么是上下文窗口" class="headerlink" title="1.1 什么是上下文窗口"></a>1.1 什么是上下文窗口</h3>
+        <p>上下文窗口是LLM能够处理的输入文本长度限制，通常以token为单位。不同模型的上下文窗口大小不同，例如：</p>
+        <ul>
+          <li>GPT-3.5：4K/16K token</li>
+          <li>GPT-4：8K/32K/128K token</li>
+          <li>Claude 3：8K/100K/200K token</li>
+        </ul>
+        <pre><code class="lang-typescript">// 上下文窗口计算示例
+interface TokenCalculator {
+  countTokens(text: string): number;
+  getMaxTokens(model: string): number;
+  calculateRemaining(usedTokens: number, model: string): number;
+}
+
+class OpenAITokenCalculator implements TokenCalculator {
+  private modelLimits = {
+    'gpt-3.5-turbo': 4096,
+    'gpt-3.5-turbo-16k': 16384,
+    'gpt-4': 8192,
+    'gpt-4-32k': 32768,
+    'gpt-4o': 128000
+  };
+  
+  countTokens(text: string): number {
+    // 简化的token计算（实际应使用tiktoken库）
+    return Math.ceil(text.length / 4); // 粗略估算
+  }
+  
+  getMaxTokens(model: string): number {
+    return this.modelLimits[model as keyof typeof this.modelLimits] || 4096;
+  }
+  
+  calculateRemaining(usedTokens: number, model: string): number {
+    return this.getMaxTokens(model) - usedTokens;
+  }
+}
+
+const tokenCalculator = new OpenAITokenCalculator();
+const query = '请解释LLM上下文管理的最佳实践';
+const tokens = tokenCalculator.countTokens(query);
+console.log(`Query tokens: ${tokens}`);</code></pre>
+
+        <h3 id="1-2-上下文内容组成"><a href="#1-2-上下文内容组成" class="headerlink" title="1.2 上下文内容组成"></a>1.2 上下文内容组成</h3>
+        <p>典型的LLM对话上下文由以下部分组成：</p>
+        <ul>
+          <li>系统提示词（System Prompt）：定义模型的角色和行为</li>
+          <li>用户消息（User Messages）：用户的输入</li>
+          <li>助手消息（Assistant Messages）：模型的回复</li>
+          <li>工具消息（Tool Messages）：工具调用的结果（如果使用）</li>
+        </ul>
+        <pre><code class="lang-typescript">// 标准的OpenAI消息格式
+interface Message {
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string;
+  name?: string;
+  tool_calls?: ToolCall[];
+  tool_call_id?: string;
+}
+
+interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+// 示例对话历史
+const messages: Message[] = [
+  {
+    role: 'system',
+    content: '你是一个专业的前端开发者助手，擅长解答前端技术问题。'
+  },
+  {
+    role: 'user',
+    content: '请解释什么是React的虚拟DOM'
+  },
+  {
+    role: 'assistant',
+    content: '虚拟DOM是React中的一个核心概念，它是真实DOM的轻量级副本...'
+  },
+  {
+    role: 'user',
+    content: '它与真实DOM的区别是什么？'
+  }
+];</code></pre>
+
+        <h2 id="二、上下文管理策略"><a href="#二、上下文管理策略" class="headerlink" title="二、上下文管理策略"></a>二、上下文管理策略</h2>
+        <h3 id="2-1-基于时间的上下文管理"><a href="#2-1-基于时间的上下文管理" class="headerlink" title="2.1 基于时间的上下文管理"></a>2.1 基于时间的上下文管理</h3>
+        <pre><code class="lang-typescript">// 基于时间的上下文管理
+class TimeBasedContextManager {
+  private messages: Message[] = [];
+  private timeWindow: number; // 时间窗口（毫秒）
+  
+  constructor(timeWindow: number = 3600000) { // 默认1小时
+    this.timeWindow = timeWindow;
+  }
+  
+  addMessage(message: Message): void {
+    this.messages.push({
+      ...message,
+      timestamp: Date.now()
+    });
+    this.cleanupOldMessages();
+  }
+  
+  private cleanupOldMessages(): void {
+    const now = Date.now();
+    this.messages = this.messages.filter(msg => {
+      return now - (msg.timestamp || 0) <= this.timeWindow;
+    });
+  }
+  
+  getContext(): Message[] {
+    return this.messages;
+  }
+  
+  clear(): void {
+    this.messages = [];
+  }
+}
+
+// 使用示例
+const contextManager = new TimeBasedContextManager(3600000);
+contextManager.addMessage({ role: 'user', content: 'Hello' });
+contextManager.addMessage({ role: 'assistant', content: 'Hi there!' });</code></pre>
+
+        <h3 id="2-2-基于token的上下文管理"><a href="#2-2-基于token的上下文管理" class="headerlink" title="2.2 基于token的上下文管理"></a>2.2 基于token的上下文管理</h3>
+        <pre><code class="lang-typescript">// 基于token的上下文管理
+class TokenBasedContextManager {
+  private messages: Message[] = [];
+  private tokenCalculator: TokenCalculator;
+  private maxTokens: number;
+  
+  constructor(model: string, tokenCalculator: TokenCalculator) {
+    this.tokenCalculator = tokenCalculator;
+    this.maxTokens = tokenCalculator.getMaxTokens(model);
+  }
+  
+  addMessage(message: Message): void {
+    this.messages.push(message);
+    this.trimToTokenLimit();
+  }
+  
+  private trimToTokenLimit(): void {
+    let totalTokens = 0;
+    let trimmedMessages: Message[] = [];
+    
+    // 从最新的消息开始，保留尽可能多的上下文
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const message = this.messages[i];
+      const messageTokens = this.tokenCalculator.countTokens(message.content || '');
+      
+      if (totalTokens + messageTokens <= this.maxTokens * 0.8) { // 预留20%空间
+        trimmedMessages.unshift(message);
+        totalTokens += messageTokens;
+      } else {
+        break;
+      }
+    }
+    
+    this.messages = trimmedMessages;
+  }
+  
+  getContext(): Message[] {
+    return this.messages;
+  }
+  
+  getTokenCount(): number {
+    return this.messages.reduce((total, msg) => {
+      return total + this.tokenCalculator.countTokens(msg.content || '');
+    }, 0);
+  }
+}
+
+// 使用示例
+const tokenManager = new TokenBasedContextManager('gpt-4', tokenCalculator);
+tokenManager.addMessage({ role: 'user', content: 'Tell me about React' });
+tokenManager.addMessage({ role: 'assistant', content: 'React is a JavaScript library...' });
+console.log(`Current token count: ${tokenManager.getTokenCount()}`);</code></pre>
+
+        <h3 id="2-3-智能上下文压缩"><a href="#2-3-智能上下文压缩" class="headerlink" title="2.3 智能上下文压缩"></a>2.3 智能上下文压缩</h3>
+        <pre><code class="lang-typescript">// 智能上下文压缩
+class SmartContextManager {
+  private messages: Message[] = [];
+  private tokenCalculator: TokenCalculator;
+  private maxTokens: number;
+  
+  constructor(model: string, tokenCalculator: TokenCalculator) {
+    this.tokenCalculator = tokenCalculator;
+    this.maxTokens = tokenCalculator.getMaxTokens(model);
+  }
+  
+  addMessage(message: Message): void {
+    this.messages.push(message);
+    this.optimizeContext();
+  }
+  
+  private optimizeContext(): void {
+    let totalTokens = this.getTokenCount();
+    
+    if (totalTokens <= this.maxTokens * 0.8) {
+      return; // 不需要优化
+    }
+    
+    // 1. 保留系统提示词
+    const systemMessage = this.messages.find(msg => msg.role === 'system');
+    
+    // 2. 保留最近的几条消息
+    const recentMessages = this.messages.filter(msg => msg.role !== 'system').slice(-3);
+    
+    // 3. 压缩中间的消息
+    const middleMessages = this.messages.filter(msg => 
+      msg.role !== 'system' && !recentMessages.includes(msg)
+    );
+    
+    if (middleMessages.length > 0) {
+      const compressedContent = this.summarizeMessages(middleMessages);
+      recentMessages.unshift({
+        role: 'assistant',
+        content: `[Context Summary]: ${compressedContent}`
+      });
+    }
+    
+    // 4. 重新构建消息列表
+    this.messages = [];
+    if (systemMessage) {
+      this.messages.push(systemMessage);
+    }
+    this.messages.push(...recentMessages);
+  }
+  
+  private summarizeMessages(messages: Message[]): string {
+    // 这里可以调用LLM进行摘要，或者使用简单的规则
+    const userMessages = messages.filter(msg => msg.role === 'user');
+    const assistantMessages = messages.filter(msg => msg.role === 'assistant');
+    
+    return `用户询问了 ${userMessages.length} 个问题，助手提供了 ${assistantMessages.length} 个回答，主要讨论了前端开发相关话题。`;
+  }
+  
+  getContext(): Message[] {
+    return this.messages;
+  }
+  
+  getTokenCount(): number {
+    return this.messages.reduce((total, msg) => {
+      return total + this.tokenCalculator.countTokens(msg.content || '');
+    }, 0);
+  }
+}
+
+// 使用示例
+const smartManager = new SmartContextManager('gpt-4', tokenCalculator);</code></pre>
+
+        <h2 id="三、前端实现方案"><a href="#三、前端实现方案" class="headerlink" title="三、前端实现方案"></a>三、前端实现方案</h2>
+        <h3 id="3-1-React上下文管理Hook"><a href="#3-1-React上下文管理Hook" class="headerlink" title="3.1 React上下文管理Hook"></a>3.1 React上下文管理Hook</h3>
+        <pre><code class="lang-typescript">// React上下文管理Hook
+import { useState, useCallback, useRef, useEffect } from 'react';
+
+export function useLLMContext(model: string = 'gpt-4') {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [tokenCount, setTokenCount] = useState(0);
+  const tokenCalculatorRef = useRef<TokenCalculator>(new OpenAITokenCalculator());
+  const modelRef = useRef(model);
+  
+  useEffect(() => {
+    modelRef.current = model;
+  }, [model]);
+  
+  const addMessage = useCallback((message: Message) => {
+    setMessages(prev => {
+      const newMessages = [...prev, message];
+      const newTokenCount = newMessages.reduce((total, msg) => {
+        return total + tokenCalculatorRef.current.countTokens(msg.content || '');
+      }, 0);
+      setTokenCount(newTokenCount);
+      return newMessages;
+    });
+  }, []);
+  
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setTokenCount(0);
+  }, []);
+  
+  const trimContext = useCallback(() => {
+    setMessages(prev => {
+      const maxTokens = tokenCalculatorRef.current.getMaxTokens(modelRef.current);
+      let totalTokens = 0;
+      let trimmedMessages: Message[] = [];
+      
+      for (let i = prev.length - 1; i >= 0; i--) {
+        const message = prev[i];
+        const messageTokens = tokenCalculatorRef.current.countTokens(message.content || '');
+        
+        if (totalTokens + messageTokens <= maxTokens * 0.8) {
+          trimmedMessages.unshift(message);
+          totalTokens += messageTokens;
+        } else {
+          break;
+        }
+      }
+      
+      setTokenCount(totalTokens);
+      return trimmedMessages;
+    });
+  }, []);
+  
+  return {
+    messages,
+    tokenCount,
+    addMessage,
+    clearMessages,
+    trimContext
+  };
+}
+
+// 使用示例
+function ChatComponent() {
+  const { messages, addMessage, clearMessages, tokenCount } = useLLMContext('gpt-4');
+  
+  const handleSend = async (text: string) => {
+    addMessage({ role: 'user', content: text });
+    
+    // 调用LLM API
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [...messages, { role: 'user', content: text }] })
+    });
+    
+    const data = await response.json();
+    addMessage({ role: 'assistant', content: data.response });
+  };
+  
+  return (
+    <div>
+      <div className="token-info">Token count: {tokenCount}</div>
+      <div className="messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message ${msg.role}`}>
+            {msg.content}
+          </div>
+        ))}
+      </div>
+      <input 
+        type="text" 
+        onKeyPress={(e) => e.key === 'Enter' && handleSend(e.target.value)}
+      />
+    </div>
+  );
+}</code></pre>
+
+        <h3 id="3-2-会话历史存储"><a href="#3-2-会话历史存储" class="headerlink" title="3.2 会话历史存储"></a>3.2 会话历史存储</h3>
+        <pre><code class="lang-typescript">// 会话历史存储
+class SessionStorage {
+  private storageKey: string;
+  private maxSessions: number;
+  
+  constructor(storageKey: string = 'llm_sessions', maxSessions: number = 10) {
+    this.storageKey = storageKey;
+    this.maxSessions = maxSessions;
+  }
+  
+  saveSession(sessionId: string, messages: Message[]): void {
+    const sessions = this.getSessions();
+    sessions[sessionId] = {
+      messages,
+      timestamp: Date.now()
+    };
+    
+    // 限制会话数量
+    const sessionIds = Object.keys(sessions).sort((a, b) => 
+      sessions[b].timestamp - sessions[a].timestamp
+    );
+    
+    if (sessionIds.length > this.maxSessions) {
+      const sessionsToRemove = sessionIds.slice(this.maxSessions);
+      sessionsToRemove.forEach(id => delete sessions[id]);
+    }
+    
+    localStorage.setItem(this.storageKey, JSON.stringify(sessions));
+  }
+  
+  getSession(sessionId: string): Message[] | null {
+    const sessions = this.getSessions();
+    return sessions[sessionId]?.messages || null;
+  }
+  
+  getAllSessions(): { [key: string]: { messages: Message[]; timestamp: number } } {
+    return this.getSessions();
+  }
+  
+  deleteSession(sessionId: string): void {
+    const sessions = this.getSessions();
+    delete sessions[sessionId];
+    localStorage.setItem(this.storageKey, JSON.stringify(sessions));
+  }
+  
+  private getSessions(): { [key: string]: { messages: Message[]; timestamp: number } } {
+    const stored = localStorage.getItem(this.storageKey);
+    return stored ? JSON.parse(stored) : {};
+  }
+}
+
+// 使用示例
+const sessionStorage = new SessionStorage();
+const sessionId = `session_${Date.now()}`;
+sessionStorage.saveSession(sessionId, messages);
+const savedMessages = sessionStorage.getSession(sessionId);</code></pre>
+
+        <h2 id="四、高级优化技巧"><a href="#四、高级优化技巧" class="headerlink" title="四、高级优化技巧"></a>四、高级优化技巧</h2>
+        <h3 id="4-1-增量上下文更新"><a href="#4-1-增量上下文更新" class="headerlink" title="4.1 增量上下文更新"></a>4.1 增量上下文更新</h3>
+        <pre><code class="lang-typescript">// 增量上下文更新
+class IncrementalContextManager {
+  private baseContext: Message[] = [];
+  private incrementalMessages: Message[] = [];
+  private tokenCalculator: TokenCalculator;
+  
+  constructor(tokenCalculator: TokenCalculator) {
+    this.tokenCalculator = tokenCalculator;
+  }
+  
+  setBaseContext(messages: Message[]): void {
+    this.baseContext = messages;
+  }
+  
+  addIncrementalMessage(message: Message): void {
+    this.incrementalMessages.push(message);
+  }
+  
+  getFullContext(): Message[] {
+    return [...this.baseContext, ...this.incrementalMessages];
+  }
+  
+  getIncrementalContext(): Message[] {
+    return this.incrementalMessages;
+  }
+  
+  resetIncremental(): void {
+    this.incrementalMessages = [];
+  }
+  
+  // 智能合并上下文
+  mergeContexts(): Message[] {
+    const fullContext = this.getFullContext();
+    const totalTokens = fullContext.reduce((total, msg) => {
+      return total + this.tokenCalculator.countTokens(msg.content || '');
+    }, 0);
+    
+    if (totalTokens > 8000) { // GPT-4的8K限制
+      // 保留系统提示词和最近的增量消息
+      const systemMessage = this.baseContext.find(msg => msg.role === 'system');
+      const recentMessages = this.incrementalMessages.slice(-5);
+      
+      return [
+        ...(systemMessage ? [systemMessage] : []),
+        ...recentMessages
+      ];
+    }
+    
+    return fullContext;
+  }
+}
+
+// 使用示例
+const incrementalManager = new IncrementalContextManager(tokenCalculator);
+incrementalManager.setBaseContext([
+  { role: 'system', content: 'You are a helpful assistant.' }
+]);
+incrementalManager.addIncrementalMessage({ role: 'user', content: 'Hello' });
+incrementalManager.addIncrementalMessage({ role: 'assistant', content: 'Hi there!' });</code></pre>
+
+        <h3 id="4-2-上下文优先级管理"><a href="#4-2-上下文优先级管理" class="headerlink" title="4.2 上下文优先级管理"></a>4.2 上下文优先级管理</h3>
+        <pre><code class="lang-typescript">// 上下文优先级管理
+class PriorityContextManager {
+  private highPriorityMessages: Message[] = [];
+  private mediumPriorityMessages: Message[] = [];
+  private lowPriorityMessages: Message[] = [];
+  private tokenCalculator: TokenCalculator;
+  private maxTokens: number;
+  
+  constructor(model: string, tokenCalculator: TokenCalculator) {
+    this.tokenCalculator = tokenCalculator;
+    this.maxTokens = tokenCalculator.getMaxTokens(model);
+  }
+  
+  addMessage(message: Message, priority: 'high' | 'medium' | 'low' = 'medium') {
+    switch (priority) {
+      case 'high':
+        this.highPriorityMessages.push(message);
+        break;
+      case 'medium':
+        this.mediumPriorityMessages.push(message);
+        break;
+      case 'low':
+        this.lowPriorityMessages.push(message);
+        break;
+    }
+    this.optimizeByPriority();
+  }
+  
+  private optimizeByPriority() {
+    let totalTokens = 0;
+    let optimizedMessages: Message[] = [];
+    
+    // 1. 先添加高优先级消息
+    for (const msg of this.highPriorityMessages) {
+      const msgTokens = this.tokenCalculator.countTokens(msg.content || '');
+      if (totalTokens + msgTokens <= this.maxTokens * 0.8) {
+        optimizedMessages.push(msg);
+        totalTokens += msgTokens;
+      }
+    }
+    
+    // 2. 再添加中优先级消息
+    for (const msg of this.mediumPriorityMessages) {
+      const msgTokens = this.tokenCalculator.countTokens(msg.content || '');
+      if (totalTokens + msgTokens <= this.maxTokens * 0.8) {
+        optimizedMessages.push(msg);
+        totalTokens += msgTokens;
+      }
+    }
+    
+    // 3. 最后添加低优先级消息
+    for (const msg of this.lowPriorityMessages) {
+      const msgTokens = this.tokenCalculator.countTokens(msg.content || '');
+      if (totalTokens + msgTokens <= this.maxTokens * 0.8) {
+        optimizedMessages.push(msg);
+        totalTokens += msgTokens;
+      }
+    }
+    
+    // 更新消息列表
+    this.highPriorityMessages = optimizedMessages.filter(msg => 
+      msg.role === 'system' || msg.role === 'tool'
+    );
+    this.mediumPriorityMessages = optimizedMessages.filter(msg => 
+      msg.role === 'user' || msg.role === 'assistant'
+    );
+    this.lowPriorityMessages = [];
+  }
+  
+  getContext(): Message[] {
+    return [
+      ...this.highPriorityMessages,
+      ...this.mediumPriorityMessages,
+      ...this.lowPriorityMessages
+    ];
+  }
+}
+
+// 使用示例
+const priorityManager = new PriorityContextManager('gpt-4', tokenCalculator);
+priorityManager.addMessage(
+  { role: 'system', content: 'You are a helpful assistant.' },
+  'high'
+);
+priorityManager.addMessage(
+  { role: 'user', content: 'What is the capital of France?' },
+  'medium'
+);</code></pre>
+
+        <h2 id="五、性能优化与最佳实践"><a href="#五、性能优化与最佳实践" class="headerlink" title="五、性能优化与最佳实践"></a>五、性能优化与最佳实践</h2>
+        <h3 id="5-1-前端缓存策略"><a href="#5-1-前端缓存策略" class="headerlink" title="5.1 前端缓存策略"></a>5.1 前端缓存策略</h3>
+        <pre><code class="lang-typescript">// 智能缓存系统
+class LLMResponseCache {
+  private cache: Map<string, { response: string; timestamp: number }> = new Map();
+  private ttl: number; // 缓存有效期（毫秒）
+  
+  constructor(ttlMinutes: number = 30) {
+    this.ttl = ttlMinutes * 60 * 1000;
+  }
+  
+  // 生成缓存键
+  generateKey(prompt: string, context: Message[]): string {
+    const contextSummary = context
+      .filter(msg => msg.role === 'user' || msg.role === 'assistant')
+      .slice(-3)
+      .map(msg => `${msg.role}: ${msg.content.substring(0, 100)}`)
+      .join('|');
+    return `${prompt.substring(0, 200)}|${contextSummary}`;
+  }
+  
+  get(key: string): string | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
+    
+    if (Date.now() - cached.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return cached.response;
+  }
+  
+  set(key: string, response: string): void {
+    this.cache.set(key, {
+      response,
+      timestamp: Date.now()
+    });
+  }
+  
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+// 使用示例
+const responseCache = new LLMResponseCache();
+const cacheKey = responseCache.generateKey(userInput, messages);
+const cachedResponse = responseCache.get(cacheKey);
+
+if (cachedResponse) {
+  // 使用缓存的响应
+  addMessage({ role: 'assistant', content: cachedResponse });
+} else {
+  // 调用API获取新响应
+  const response = await fetchLLMResponse(userInput, messages);
+  responseCache.set(cacheKey, response);
+  addMessage({ role: 'assistant', content: response });
+}</code></pre>
+
+        <h3 id="5-2-流式响应优化"><a href="#5-2-流式响应优化" class="headerlink" title="5.2 流式响应优化"></a>5.2 流式响应优化</h3>
+        <pre><code class="lang-typescript">// 流式响应处理
+class StreamingResponseHandler {
+  private abortController: AbortController | null = null;
+  private buffer: string = '';
+  
+  async streamResponse(
+    url: string,
+    messages: Message[],
+    onChunk: (chunk: string, fullContent: string) => void,
+    onComplete: (fullContent: string) => void,
+    onError: (error: Error) => void
+  ) {
+    this.abortController?.abort();
+    this.abortController = new AbortController();
+    this.buffer = '';
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, stream: true }),
+        signal: this.abortController.signal
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      
+      if (!reader) {
+        throw new Error('Response body is null');
+      }
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              onComplete(this.buffer);
+              return;
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content || '';
+              if (content) {
+                this.buffer += content;
+                onChunk(content, this.buffer);
+              }
+            } catch (e) {
+              // 忽略解析错误
+            }
+          }
+        }
+      }
+      
+      onComplete(this.buffer);
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        onError(error);
+      }
+    }
+  }
+  
+  cancel() {
+    this.abortController?.abort();
+  }
+}
+
+// 使用示例
+const streamHandler = new StreamingResponseHandler();
+streamHandler.streamResponse(
+  '/api/chat',
+  messages,
+  (chunk, fullContent) => {
+    // 更新UI显示
+    setAssistantMessage(fullContent);
+  },
+  (fullContent) => {
+    // 完成处理
+    addMessage({ role: 'assistant', content: fullContent });
+  },
+  (error) => {
+    // 错误处理
+    console.error('Streaming error:', error);
+  }
+);</code></pre>
+
+        <h2 id="六、完整项目架构"><a href="#六、完整项目架构" class="headerlink" title="六、完整项目架构"></a>六、完整项目架构</h2>
+        <pre><code class="lang-plaintext">llm-context-app/
+├── src/
+│   ├── components/
+│   │   ├── ChatInterface.tsx      # 聊天界面组件
+│   │   ├── ContextManager.tsx     # 上下文管理组件
+│   │   └── SessionList.tsx        # 会话列表组件
+│   ├── hooks/
+│   │   ├── useLLMContext.ts       # LLM上下文管理hook
+│   │   ├── useStreaming.ts        # 流式响应hook
+│   │   └── useSessionStorage.ts   # 会话存储hook
+│   ├── services/
+│   │   ├── llmClient.ts           # LLM API客户端
+│   │   ├── tokenCalculator.ts     # token计算服务
+│   │   └── cacheService.ts        # 缓存服务
+│   ├── utils/
+│   │   ├── contextManagers.ts     # 上下文管理器实现
+│   │   ├── messageUtils.ts        # 消息处理工具
+│   │   └── storageUtils.ts        # 存储工具
+│   └── types/
+│       └── llm.ts                 # 类型定义
+├── api/
+│   └── chat.ts                    # 聊天API
+└── package.json</code></pre>
+
+        <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2>
+        <p>LLM上下文管理是构建高质量对话系统的关键。通过本文的学习，你应该掌握了：</p>
+        <ul>
+          <li>上下文窗口的概念和token计算方法</li>
+          <li>基于时间和token的上下文管理策略</li>
+          <li>智能上下文压缩和优化技术</li>
+          <li>React中的上下文管理Hook实现</li>
+          <li>会话历史存储和缓存策略</li>
+          <li>流式响应和性能优化技巧</li>
+        </ul>
+        <p>合理的上下文管理不仅能提升用户体验，还能降低API调用成本。作为前端开发者，掌握这些技能将帮助你构建更加智能、高效的大模型应用。</p>
+      </div>
+      <div class="post-copyright">
+        <div class="post-copyright__author">
+          <span class="post-copyright-meta">作者: </span>
+          <span class="post-copyright-info"><a href="/">Texas-bread</a></span>
+        </div>
+        <div class="post-copyright__type">
+          <span class="post-copyright-meta">文章链接: </span>
+          <span class="post-copyright-info"><a href="http://example.com/2026/03/29/llm-context-management/">http://example.com/2026/03/29/llm-context-management/</a></span>
+        </div>
+        <div class="post-copyright__notice">
+          <span class="post-copyright-meta">声明: </span>
+          <span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="/" target="_blank">Texas-bread的小破站</a>！</span>
+        </div>
+      </div>
+      <nav class="pagination-post" id="pagination">
+        <div class="prev-post pull-left">
+          <a href="/2026/03/29/rag-frontend/">
+            <div class="pagination-info">
+              <div class="label">上一篇</div>
+              <div class="prev_info">RAG检索增强生成：前端开发者的大模型应用实战指南</div>
+            </div>
+          </a>
+        </div>
+      </nav>
+    </div>
+    <div class="aside-content" id="aside-content">
+      <div class="card-widget card-info">
+        <div class="card-content">
+          <div class="card-info-avatar is-center">
+            <img class="avatar-img" src="/image/texas.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar">
+            <div class="author-info__name">Texas-bread</div>
+            <div class="author-info__description">前端开发工程师 / 技术爱好者</div>
+          </div>
+          <div class="card-info-social-icons is-center">
+            <a class="social-icon" href="https://github.com/Texas-bread" target="_blank" title="Github"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="card-widget card-toc">
+        <div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div>
+        <div class="toc-content">
+          <ol class="toc">
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#一、LLM上下文管理基础"><span class="toc-text">一、LLM上下文管理基础</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#二、上下文管理策略"><span class="toc-text">二、上下文管理策略</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#三、前端实现方案"><span class="toc-text">三、前端实现方案</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#四、高级优化技巧"><span class="toc-text">四、高级优化技巧</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#五、性能优化与最佳实践"><span class="toc-text">五、性能优化与最佳实践</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#六、完整项目架构"><span class="toc-text">六、完整项目架构</span></a></li>
+            <li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li>
+          </ol>
+        </div>
+      </div>
+      <div class="card-widget card-archives">
+        <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
+        <ul class="card-archive-list">
+          <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">11</span></a></li>
+          <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/05/"><span class="card-archive-list-date">五月 2024</span><span class="card-archive-list-count">1</span></a></li>
+          <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li>
+        </ul>
+      </div>
+      <div class="card-widget card-webinfo">
+        <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
+        <div class="webinfo">
+          <div class="webinfo-item"><div class="webinfo-item-title">文章数目 :</div><div class="webinfo-item-content">12</div></div>
+          <div class="webinfo-item"><div class="webinfoitem-title">已运行时间 :</div><div class="webinfo-item-content">1 年</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer id="footer">
+    <div id="footer-wrap">
+      <div class="copyright">©2024 - 2026 By Texas-bread</div>
+      <div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div>
+    </div>
+  </footer>
+</div>
+<div id="rightside">
+  <div id="rightside-config-hide">
+    <button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button>
+    <button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button>
+    <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button>
+  </div>
+  <div id="rightside-config-show">
+    <button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button>
+    <button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button>
+  </div>
+</div>
+<div id="local-search">
+  <div class="search-dialog">
+    <nav class="search-nav"><span class="search-dialog-title">本地搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav>
+    <div class="search-wrap">
+      <div class="search-box"><input class="search-box-input" placeholder="搜索文章..." type="text"></div>
+      <div class="search-result"></div>
+    </div>
+  </div>
+  <div id="search-mask"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
