@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>泛型编程深度解析：从基础到高级应用的完整指南 | Texas-bread的技术专栏</title>
+  <meta name="author" content="Texas-bread">
+  <meta name="copyright" content="Texas-bread">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="深入讲解泛型编程的核心概念、设计模式、高级技巧以及在TypeScript中的应用，帮助开发者掌握泛型的精髓。">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="泛型编程深度解析：从基础到高级应用的完整指南">
+  <meta property="og:url" content="http://example.com/2026/03/29/generics/">
+  <meta property="og:site_name" content="Texas-bread的小破站">
+  <meta property="og:description" content="深入讲解泛型编程的核心概念、设计模式、高级技巧以及在TypeScript中的应用，帮助开发者掌握泛型的精髓。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="http://example.com/image/texas.jpg">
+  <meta property="article:author" content="Texas-bread">
+  <meta property="article:published_time" content="2026-03-29T11:00:00.000Z">
+  <meta property="article:tag" content="泛型">
+  <meta property="article:tag" content="TypeScript">
+  <meta property="article:tag" content="类型系统">
+  <meta property="article:tag" content="编程范式">
+  <meta property="article:tag" content="代码复用">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="http://example.com/image/texas.jpg">
+  <link rel="shortcut icon" href="/image/Omnissiah.jpg">
+  <link rel="canonical" href="http://example.com/2026/03/29/generics/">
+  <link rel="preconnect" href="//cdn.jsdelivr.net/">
+  <link rel="preconnect" href="//busuanzi.ibruce.info/">
+  <link rel="stylesheet" href="/css/index.css?v=4.13.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'">
+  <script>
+    const GLOBAL_CONFIG = {
+      root: '/',
+      algolia: undefined,
+      localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+      translate: undefined,
+      noticeOutdate: undefined,
+      highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+      copy: { success: '复制成功', error: '复制错误', noSupport: '浏览器不支持' },
+      relativeDate: { homepage: false, post: false },
+      runtime: '',
+      dateSuffix: { just: '刚刚', min: '分钟前', hour: '小时前', day: '天前', month: '个月前' },
+      copyright: undefined,
+      lightbox: 'fancybox',
+      Snackbar: undefined,
+      infinitegrid: { js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js', buttonText: '加载更多' },
+      isPhotoFigcaption: false,
+      islazyload: false,
+      isAnchor: false,
+      percent: { toc: true, rightside: false },
+      autoDarkmode: false
+    }
+  </script>
+  <script id="config-diff">
+    var GLOBAL_CONFIG_SITE = {
+      title: '泛型编程深度解析：从基础到高级应用的完整指南',
+      isPost: true,
+      isHome: false,
+      isHighlightShrink: false,
+      isToc: true,
+      postUpdate: '2026-03-29 11:00:00'
+    }
+  </script>
+  <script>
+    (win => {
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = { value, expiry }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+          if (!itemStr) return undefined
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+        Object.keys(attr).forEach(key => script.setAttribute(key, attr[key]))
+        document.head.appendChild(script)
+      })
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function () {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+      if (t === 'dark') activateDarkMode()
+      else if (t === 'light') activateLightMode()
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') document.documentElement.classList.add('hide-aside')
+        else document.documentElement.classList.remove('hide-aside')
+      }
+      const detectApple = () => {
+        if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)
+  </script>
+  <link rel="stylesheet" href="/css/transpancy.css">
+  <link rel="stylesheet" href="/css/modify.css">
+  <meta name="generator" content="Hexo 7.1.1">
+</head>
+<body>
+<div id="web_bg"></div>
+<div id="sidebar">
+  <div id="menu-mask"></div>
+  <div id="sidebar-menus">
+    <div class="avatar-img is-center"><img src="/image/texas.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div>
+    <div class="sidebar-site-data site-data is-center">
+      <a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a>
+      <a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a>
+      <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
+    </div>
+    <hr class="custom-hr">
+    <div class="menus_items">
+      <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+      <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+        <ul class="menus_item_child">
+          <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+          <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+          <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+        </ul>
+      </div>
+      <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+      <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="body-wrap">
+  <header class="not-home-page" id="page-header" style="background-image: url('/image/mudrock.png')">
+    <nav id="nav">
+      <span id="blog-info"><a href="/" title="Texas-bread的小破站"><span class="site-name">Texas-bread的小破站</span></a></span>
+      <div id="menus">
+        <div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div>
+        <div class="menus_items">
+          <div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div>
+          <div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a>
+            <ul class="menus_item_child">
+              <li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li>
+              <li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li>
+              <li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li>
+            </ul>
+          </div>
+          <div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div>
+          <div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div>
+        </div>
+        <div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div>
+      </div>
+    </nav>
+    <div id="page-site-info">
+      <h1 id="site-title">泛型编程深度解析：从基础到高级应用的完整指南</h1>
+    </div>
+  </header>
+  <main class="layout" id="content-inner">
+    <div id="post">
+      <div id="post-info">
+        <div class="post-meta">
+          <span class="post-meta-date">
+            <i class="far fa-calendar-alt"></i>
+            <time datetime="2026-03-29T11:00:00.000Z" title="发表于 2026-03-29 19:00:00">2026-03-29</time>
+          </span>
+          <span class="post-meta-categories">
+            <i class="fas fa-folder-open"></i>
+            <a href="/categories/前端框架原理/">前端框架原理</a>
+          </span>
+          <span class="post-meta-tags">
+            <i class="fas fa-tags"></i>
+            <a href="/tags/泛型/">泛型</a>, <a href="/tags/TypeScript/">TypeScript</a>, <a href="/tags/类型系统/">类型系统</a>, <a href="/tags/编程范式/">编程范式</a>, <a href="/tags/代码复用/">代码复用</a>
+          </span>
+        </div>
+      </div>
+      <div class="post-content">
+        <p>泛型（Generics）是现代编程语言中强大的类型系统特性，它允许我们编写可复用的代码组件，同时保持类型安全。从C++的模板到Java的泛型，再到TypeScript的泛型系统，泛型编程已经成为现代软件开发的重要技能。本文将深入讲解泛型的核心概念、设计模式、高级技巧以及在TypeScript中的实际应用。</p>
+
+        <h2 id="一、泛型的核心概念"><a href="#一、泛型的核心概念" class="headerlink" title="一、泛型的核心概念"></a>一、泛型的核心概念</h2>
+        <p>泛型的本质是参数化类型，它允许我们在定义函数、接口、类时使用类型参数，从而创建适用于多种类型的通用代码。</p>
+        <h3 id="1-1-类型参数与类型变量"><a href="#1-1-类型参数与类型变量" class="headerlink" title="1.1 类型参数与类型变量"></a>1.1 类型参数与类型变量</h3>
+        <pre><code class="lang-typescript">// 基础泛型函数
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// 使用泛型
+const num = identity<number>(123); // 类型为 number
+const str = identity('hello'); // 类型推断为 string
+
+const bool = identity<boolean>(true); // 类型为 boolean</code></pre>
+        <h3 id="1-2-泛型接口与类型约束"><a href="#1-2-泛型接口与类型约束" class="headerlink" title="1.2 泛型接口与类型约束"></a>1.2 泛型接口与类型约束</h3>
+        <pre><code class="lang-typescript">// 泛型接口
+interface Box<T> {
+  value: T;
+  getValue(): T;
+  setValue(value: T): void;
+}
+
+// 类型约束
+interface Lengthwise {
+  length: number;
+}
+
+function getLength<T extends Lengthwise>(arg: T): number {
+  return arg.length;
+}
+
+getLength('hello'); // OK
+getLength([1, 2, 3]); // OK
+// getLength(123); // Error: number 没有 length 属性</code></pre>
+
+        <h2 id="二、泛型函数与类型推断"><a href="#二、泛型函数与类型推断" class="headerlink" title="二、泛型函数与类型推断"></a>二、泛型函数与类型推断</h2>
+        <h3 id="2-1-多类型参数"><a href="#2-1-多类型参数" class="headerlink" title="2.1 多类型参数"></a>2.1 多类型参数</h3>
+        <pre><code class="lang-typescript">// 多个类型参数
+function pair<T, U>(first: T, second: U): [T, U] {
+  return [first, second];
+}
+
+const result = pair<string, number>('hello', 123);
+// 类型为 [string, number]</code></pre>
+        <h3 id="2-2-类型推断与默认类型参数"><a href="#2-2-类型推断与默认类型参数" class="headerlink" title="2.2 类型推断与默认类型参数"></a>2.2 类型推断与默认类型参数</h3>
+        <pre><code class="lang-typescript">// 类型推断
+function createArray<T>(length: number, value: T): T[] {
+  return Array(length).fill(value);
+}
+
+const strArray = createArray(3, 'hello'); // 类型推断为 string[]
+const numArray = createArray(3, 123); // 类型推断为 number[]
+
+// 默认类型参数
+function createElement<T = HTMLElement>(tag: string): T {
+  return document.createElement(tag) as T;
+}</code></pre>
+
+        <h2 id="三、泛型类与接口"><a href="#三、泛型类与接口" class="headerlink" title="三、泛型类与接口"></a>三、泛型类与接口</h2>
+        <h3 id="3-1-泛型类"><a href="#3-1-泛型类" class="headerlink" title="3.1 泛型类"></a>3.1 泛型类</h3>
+        <pre><code class="lang-typescript">// 泛型类
+class Storage<T> {
+  private items: T[] = [];
+  
+  add(item: T): void {
+    this.items.push(item);
+  }
+  
+  get(index: number): T | undefined {
+    return this.items[index];
+  }
+  
+  getAll(): T[] {
+    return [...this.items];
+  }
+}
+
+// 使用泛型类
+const stringStorage = new Storage<string>();
+stringStorage.add('hello');
+stringStorage.add('world');
+console.log(stringStorage.getAll()); // ['hello', 'world']
+
+const numberStorage = new Storage<number>();
+numberStorage.add(1);
+numberStorage.add(2);
+console.log(numberStorage.getAll()); // [1, 2]</code></pre>
+        <h3 id="3-2-泛型接口与类型别名"><a href="#3-2-泛型接口与类型别名" class="headerlink" title="3.2 泛型接口与类型别名"></a>3.2 泛型接口与类型别名</h3>
+        <pre><code class="lang-typescript">// 泛型接口
+interface Response<T> {
+  data: T;
+  status: number;
+  message: string;
+}
+
+// 泛型类型别名
+type Nullable<T> = T | null;
+type Optional<T> = T | undefined;
+type Pair<T, U> = [T, U];
+
+// 使用示例
+const userResponse: Response<User> = {
+  data: { id: 1, name: '张三' },
+  status: 200,
+  message: 'Success'
+};
+
+const nullableName: Nullable<string> = '张三' || null;
+const optionalAge: Optional<number> = undefined;</code></pre>
+
+        <h2 id="四、高级泛型技巧"><a href="#四、高级泛型技巧" class="headerlink" title="四、高级泛型技巧"></a>四、高级泛型技巧</h2>
+        <h3 id="4-1-条件类型"><a href="#4-1-条件类型" class="headerlink" title="4.1 条件类型"></a>4.1 条件类型</h3>
+        <pre><code class="lang-typescript">// 条件类型
+type NonNullable<T> = T extends null | undefined ? never : T;
+type IsArray<T> = T extends any[] ? true : false;
+
+// 使用示例
+type NonNullableString = NonNullable<string | null>; // string
+type IsStringArray = IsArray<string[]>; // true
+type IsNumberArray = IsArray<number[]>; // true</code></pre>
+        <h3 id="4-2-映射类型"><a href="#4-2-映射类型" class="headerlink" title="4.2 映射类型"></a>4.2 映射类型</h3>
+        <pre><code class="lang-typescript">// 映射类型
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
+type Required<T> = {
+  [P in keyof T]-?: T[P];
+};
+
+// 使用示例
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+type ReadonlyUser = Readonly<User>;
+type PartialUser = Partial<User>;
+
+const readonlyUser: ReadonlyUser = {
+  id: 1,
+  name: '张三',
+  email: 'zhangsan@example.com'
+};
+// readonlyUser.id = 2; // Error: Cannot assign to 'id' because it is read-only
+
+const partialUser: PartialUser = {
+  name: '李四' // OK，其他属性可选
+};</code></pre>
+        <h3 id="4-3-工具类型"><a href="#4-3-工具类型" class="headerlink" title="4.3 工具类型"></a>4.3 工具类型</h3>
+        <pre><code class="lang-typescript">// 内置工具类型
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age?: number;
+}
+
+// Pick：选择部分属性
+type UserBasic = Pick<User, 'id' | 'name'>;
+// { id: number; name: string; }
+
+// Omit：排除部分属性
+type UserPublic = Omit<User, 'email'>;
+// { id: number; name: string; age?: number; }
+
+// Record：创建对象类型
+type StringMap = Record<string, number>;
+// { [key: string]: number; }
+
+// Extract：提取联合类型中的部分
+type StringOrNumber = string | number;
+type ExtractedString = Extract<StringOrNumber, string>; // string</code></pre>
+
+        <h2 id="五、泛型设计模式"><a href="#五、泛型设计模式" class="headerlink" title="五、泛型设计模式"></a>五、泛型设计模式</h2>
+        <h3 id="5-1-工厂模式"><a href="#5-1-工厂模式" class="headerlink" title="5.1 工厂模式"></a>5.1 工厂模式</h3>
+        <pre><code class="lang-typescript">// 泛型工厂模式
+interface Creator<T> {
+  create(): T;
+}
+
+class UserCreator implements Creator<User> {
+  create(): User {
+    return { id: 1, name: '张三' };
+  }
+}
+
+class ProductCreator implements Creator<Product> {
+  create(): Product {
+    return { id: 1, name: '商品1', price: 100 };
+  }
+}
+
+// 使用工厂
+function createEntity<T>(creator: Creator<T>): T {
+  return creator.create();
+}
+
+const user = createEntity(new UserCreator());
+const product = createEntity(new ProductCreator());</code></pre>
+        <h3 id="5-2-策略模式"><a href="#5-2-策略模式" class="headerlink" title="5.2 策略模式"></a>5.2 策略模式</h3>
+        <pre><code class="lang-typescript">// 泛型策略模式
+interface SortStrategy<T> {
+  compare(a: T, b: T): number;
+}
+
+class NumberSortStrategy implements SortStrategy<number> {
+  compare(a: number, b: number): number {
+    return a - b;
+  }
+}
+
+class StringSortStrategy implements SortStrategy<string> {
+  compare(a: string, b: string): number {
+    return a.localeCompare(b);
+  }
+}
+
+// 使用策略模式
+function sortArray<T>(arr: T[], strategy: SortStrategy<T>): T[] {
+  return [...arr].sort((a, b) => strategy.compare(a, b));
+}
+
+const numbers = [3, 1, 4, 1, 5];
+const strings = ['banana', 'apple', 'cherry'];
+
+const sortedNumbers = sortArray(numbers, new NumberSortStrategy());
+const sortedStrings = sortArray(strings, new StringSortStrategy());</code></pre>
+        <h3 id="5-3-仓储模式"><a href="#5-3-仓储模式" class="headerlink" title="5.3 仓储模式"></a>5.3 仓储模式</h3>
+        <pre><code class="lang-typescript">// 泛型仓储模式
+interface Repository<T> {
+  findById(id: number): T | undefined;
+  findAll(): T[];
+  save(entity: T): void;
+  delete(id: number): void;
+}
+
+class UserRepository implements Repository<User> {
+  private users: User[] = [];
+  
+  findById(id: number): User | undefined {
+    return this.users.find(user => user.id === id);
+  }
+  
+  findAll(): User[] {
+    return [...this.users];
+  }
+  
+  save(user: User): void {
+    this.users.push(user);
+  }
+  
+  delete(id: number): void {
+    this.users = this.users.filter(user => user.id !== id);
+  }
+}
+
+// 使用仓储
+function manageEntity<T>(repository: Repository<T>, id: number) {
+  const entity = repository.findById(id);
+  if (entity) {
+    console.log('Found:', entity);
+  } else {
+    console.log('Not found');
+  }
+}
+
+const userRepo = new UserRepository();
+manageEntity(userRepo, 1);</code></pre>
+
+        <h2 id="六、泛型在实战中的应用"><a href="#六、泛型在实战中的应用" class="headerlink" title="六、泛型在实战中的应用"></a>六、泛型在实战中的应用</h2>
+        <h3 id="6-1-API响应类型"><a href="#6-1-API响应类型" class="headerlink" title="6.1 API响应类型"></a>6.1 API响应类型</h3>
+        <pre><code class="lang-typescript">// API响应泛型类型
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message: string;
+  code: number;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+}
+
+// 使用泛型API响应
+async function fetchUser(): Promise<ApiResponse<User>> {
+  const response = await fetch('/api/user');
+  return response.json();
+}
+
+async function fetchPost(): Promise<ApiResponse<Post>> {
+  const response = await fetch('/api/post');
+  return response.json();
+}
+
+// 使用示例
+const userResponse = await fetchUser();
+if (userResponse.success) {
+  console.log(userResponse.data.name); // TypeScript 知道这是 User 类型
+}
+
+const postResponse = await fetchPost();
+if (postResponse.success) {
+  console.log(postResponse.data.title); // TypeScript 知道这是 Post 类型
+}</code></pre>
+        <h3 id="6-2-组件状态管理"><a href="#6-2-组件状态管理" class="headerlink" title="6.2 组件状态管理"></a>6.2 组件状态管理</h3>
+        <pre><code class="lang-typescript">// 泛型状态管理
+class Store<T> {
+  private state: T;
+  private listeners: ((state: T) => void)[] = [];
+  
+  constructor(initialState: T) {
+    this.state = initialState;
+  }
+  
+  getState(): T {
+    return this.state;
+  }
+  
+  setState(newState: Partial<T>): void {
+    this.state = { ...this.state, ...newState };
+    this.listeners.forEach(listener => listener(this.state));
+  }
+  
+  subscribe(listener: (state: T) => void): () => void {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+}
+
+// 定义状态接口
+interface AppState {
+  user: User | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// 使用泛型状态管理
+const appStore = new Store<AppState>({
+  user: null,
+  isLoading: false,
+  error: null
+});
+
+appStore.subscribe((state) => {
+  console.log('State changed:', state);
+});
+
+appStore.setState({ isLoading: true });</code></pre>
+        <h3 id="6-3-数据结构实现"><a href="#6-3-数据结构实现" class="headerlink" title="6.3 数据结构实现"></a>6.3 数据结构实现</h3>
+        <pre><code class="lang-typescript">// 泛型栈实现
+class Stack<T> {
+  private items: T[] = [];
+  
+  push(item: T): void {
+    this.items.push(item);
+  }
+  
+  pop(): T | undefined {
+    return this.items.pop();
+  }
+  
+  peek(): T | undefined {
+    return this.items[this.items.length - 1];
+  }
+  
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+  
+  size(): number {
+    return this.items.length;
+  }
+}
+
+// 泛型队列实现
+class Queue<T> {
+  private items: T[] = [];
+  
+  enqueue(item: T): void {
+    this.items.push(item);
+  }
+  
+  dequeue(): T | undefined {
+    return this.items.shift();
+  }
+  
+  front(): T | undefined {
+    return this.items[0];
+  }
+  
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+}
+
+// 使用示例
+const numberStack = new Stack<number>();
+numberStack.push(1);
+numberStack.push(2);
+console.log(numberStack.pop()); // 2
+
+const stringQueue = new Queue<string>();
+stringQueue.enqueue('first');
+stringQueue.enqueue('second');
+console.log(stringQueue.dequeue()); // 'first'</code></pre>
+
+        <h2 id="七、泛型最佳实践与常见陷阱"><a href="#七、泛型最佳实践与常见陷阱" class="headerlink" title="七、泛型最佳实践与常见陷阱"></a>七、泛型最佳实践与常见陷阱</h2>
+        <h3 id="7-1-最佳实践"><a href="#7-1-最佳实践" class="headerlink" title="7.1 最佳实践"></a>7.1 最佳实践</h3>
+        <ul>
+          <li><strong>保持类型安全</strong>：避免使用any，合理使用泛型约束</li>
+          <li><strong>合理命名</strong>：使用T、U、V等有意义的类型参数名称</li>
+          <li><strong>复用工具类型</strong>：善用Pick、Omit、Partial等内置工具类型</li>
+          <li><strong>文档完善</strong>：为泛型类型添加清晰的注释和文档</li>
+          <li><strong>测试覆盖</strong>：确保泛型代码在各种类型下都能正常工作</li>
+        </ul>
+        <h3 id="7-2-常见陷阱"><a href="#7-2-常见陷阱" class="headerlink" title="7.2 常见陷阱"></a>7.2 常见陷阱</h3>
+        <ul>
+          <li><strong>过度泛化</strong>：泛型应该提高代码复用性，而不是过度设计</li>
+          <li><strong>类型断言滥用</strong>：避免过度使用类型断言，优先使用类型守卫</li>
+          <li><strong>约束缺失</strong>：泛型参数应该有适当的约束，否则可能失去类型安全</li>
+          <li><strong>循环依赖</strong>：复杂的泛型类型可能导致循环依赖，影响编译性能</li>
+          <li><strong>类型推断失效</strong>：某些情况下类型推断可能失效，需要显式指定类型</li>
+        </ul>
+
+        <h2 id="八、总结：泛型的艺术"><a href="#八、总结：泛型的艺术" class="headerlink" title="八、总结：泛型的艺术"></a>八、总结：泛型的艺术</h2>
+        <p>泛型是现代类型系统的重要组成部分，它通过参数化类型的方式，让我们能够编写既通用又类型安全的代码。从基础的类型参数到高级的条件类型，从设计模式到实战应用，泛型为软件开发提供了强大的抽象能力。掌握泛型编程，不仅能提高代码质量和开发效率，更能体现开发者对类型系统的深刻理解。</p>
+        <blockquote>
+          <p>“泛型不是复杂的语法糖，而是编程思维的体现。它教会我们如何抽象、如何复用、如何保持类型安全。” —— 本文作者注</p>
+        </blockquote>
+        <p><em>参考文献：TypeScript官方文档 — Generics；Java泛型指南；C++模板编程；现代编程语言类型系统研究。</em></p>
+      </div>
+      <div class="post-copyright">
+        <div class="post-copyright__author"><span>本文作者：</span>Texas-bread</div>
+        <div class="post-copyright__type"><span>本文链接：</span><a href="http://example.com/2026/03/29/generics/">http://example.com/2026/03/29/generics/</a></div>
+        <div class="post-copyright__notice"><span>版权声明：</span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</div>
+      </div>
+      <nav class="post-navigation">
+        <div class="prev"><a href="/2026/03/29/vercel-deployment/" rel="prev">← Vercel自动化部署实战：从配置到部署的完整指南</a></div>
+        <div class="next"><a href="/2026/03/28/vite-webpack/" rel="next">Vite与Webpack基础配置深度解析：现代前端构建工具对比与实践 →</a></div>
+      </nav>
+    </div>
+
+    <div class="aside-content" id="aside-content">
+      <div class="card-widget card-info">
+        <div class="is-center">
+          <div class="avatar-img"><img src="/image/texas.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div>
+          <div class="author-info__name">Texas-bread</div>
+          <div class="author-info__description">前端架构师 | 热爱工程化与底层原理</div>
+        </div>
+        <div class="card-info-data site-data is-center">
+          <a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a>
+          <a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a>
+          <a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a>
+        </div>
+        <a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Texas-bread"><i class="fab fa-github"></i><span>Follow Me</span></a>
+      </div>
+      <div class="card-widget card-announcement">
+        <div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div>
+        <div class="announcement_content">深入源码，专注现代前端工程化实践。</div>
+      </div>
+      <div class="sticky_layout">
+        <div class="card-widget card-recent-post">
+          <div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div>
+          <div class="aside-list">
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/29/generics/" title="泛型编程深度解析：从基础到高级应用的完整指南">泛型编程深度解析：从基础到高级应用的完整指南</a>
+                <time datetime="2026-03-29T11:00:00.000Z">2026-03-29</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/29/vercel-deployment/" title="Vercel自动化部署实战：从配置到部署的完整指南">Vercel自动化部署实战：从配置到部署的完整指南</a>
+                <time datetime="2026-03-29T10:00:00.000Z">2026-03-29</time>
+              </div>
+            </div>
+            <div class="aside-list-item no-cover">
+              <div class="content">
+                <a class="title" href="/2026/03/28/vite-webpack/" title="Vite与Webpack基础配置深度解析：现代前端构建工具对比与实践">Vite与Webpack基础配置深度解析：现代前端构建工具对比与实践</a>
+                <time datetime="2026-03-28T14:00:00.000Z">2026-03-28</time>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-widget card-archives">
+          <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
+          <ul class="card-archive-list">
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">三月 2026</span><span class="card-archive-list-count">8</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/05/"><span class="card-archive-list-date">五月 2024</span><span class="card-archive-list-count">1</span></a></li>
+            <li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li>
+          </ul>
+        </div>
+        <div class="card-widget card-webinfo">
+          <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
+          <div class="webinfo">
+            <div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">10</div></div>
+            <div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+            <div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-29T11:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer id="footer" style="background: transparent">
+    <div id="footer-wrap">
+      <div class="copyright">&copy;2020 - 2026 By Texas-bread</div>
+      <div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div>
+    </div>
+  </footer>
+</div>
+<div id="rightside">
+  <div id="rightside-config-hide">
+    <button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button>
+    <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button>
+  </div>
+  <div id="rightside-config-show">
+    <button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button>
+    <button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button>
+  </div>
+</div>
+<div>
+  <script src="/js/utils.js?v=4.13.0"></script>
+  <script src="/js/main.js?v=4.13.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script>
+  <div class="js-pjax"></div>
+  <div class="aplayer no-destroy" data-id="8152976493" data-server="netease" data-type="playlist" data-order="list" data-fixed="true" data-preload="auto" data-autoplay="false" data-mutex="true"></div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'">
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script>
+  <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <div id="local-search">
+    <div class="search-dialog">
+      <nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav>
+      <div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div>
+      <div class="search-wrap">
+        <div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div>
+        <hr><div id="local-search-results"></div><div id="local-search-stats-wrap"></div>
+      </div>
+    </div>
+    <div id="search-mask"></div>
+    <script src="/js/search/local-search.js?v=4.13.0"></script>
+  </div>
+</div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/kasumi_event128.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":20,"vOffset":0},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script>
+</body>
+</html>
